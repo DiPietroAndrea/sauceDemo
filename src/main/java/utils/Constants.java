@@ -16,5 +16,7 @@ public class Constants {
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
     public static final String BROWSER = "browser";
+    public static final String CREDENZIALI_ERROR = "credenzialierror";
+    public static final String UTENTE_BLOCCATO_ERROR = "utentebloccatoerror";
 
 }

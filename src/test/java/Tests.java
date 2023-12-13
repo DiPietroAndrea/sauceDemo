@@ -1,5 +1,7 @@
 import drivers.DriverSingleton;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import pages.*;
@@ -18,7 +20,7 @@ public class Tests {
     static CheckOutOverviewPage checkOutOverviewPage;
     static CheckOutCompletePage checkOutCompletePage;
 
-    @BeforeClass
+    @BeforeAll
     public static void initializeObject() {
         frameworkProperties = new FrameworkProperties();
         DriverSingleton.getInstance(frameworkProperties.getProperty(Constants.BROWSER));
@@ -35,8 +37,45 @@ public class Tests {
     public void authenticationTest() {
     driver.get(Constants.URL);
     loginInPage.logIn(frameworkProperties.getProperty(Constants.USERNAME), frameworkProperties.getProperty(Constants.PASSWORD));
-    assertEquals(frameworkProperties.getProperty(Constants.TITOLO_HOME_PAGE), homePage.getTitle());
+    Assertions.assertEquals(frameworkProperties.getProperty(Constants.TITOLO_HOME_PAGE), homePage.getTitle());
     }
 
+    @Test
+    public void authenticationTestBLockedUser() {
+        driver.get(Constants.URL);
+        loginInPage.logIn(frameworkProperties.getProperty(Constants.USERNAME), frameworkProperties.getProperty(Constants.PASSWORD));
+        Assertions.assertEquals(frameworkProperties.getProperty(Constants.UTENTE_BLOCCATO_ERROR), loginInPage.getBlockedError());
+    }
+
+    @Test
+    public void authenticationTestErrorCredential() {
+        driver.get(Constants.URL);
+        loginInPage.logIn(frameworkProperties.getProperty(Constants.USERNAME), frameworkProperties.getProperty(Constants.PASSWORD));
+        Assertions.assertEquals(frameworkProperties.getProperty(Constants.CREDENZIALI_ERROR), loginInPage.getCredentialError());
+    }
+
+    @Test
+    public void addElementToCartTest(){
+        driver.get(Constants.URL);
+        loginInPage.logIn(frameworkProperties.getProperty(Constants.USERNAME), frameworkProperties.getProperty(Constants.PASSWORD));
+        homePage.addToCart();
+    }
+
+    @Test
+    public void fullBuyElementTest() {
+        driver.get(Constants.URL);
+        loginInPage.logIn(frameworkProperties.getProperty(Constants.USERNAME), frameworkProperties.getProperty(Constants.PASSWORD));
+        homePage.addToCart();
+        homePage.proceedToCheckOut();
+        cartPage.proceedToCheckOut();
+        checkOutYourInformationPage.InsertYourInformation();
+        checkOutOverviewPage.completeCheckOut();
+        Assertions.assertEquals("Thank you for your order!", checkOutCompletePage.getTitoloOrderRecieved());
+        checkOutCompletePage.returnHomePage();
+
+    }
+
+    @AfterAll
+    public static void closeTests() { driver.quit(); }
 
 }

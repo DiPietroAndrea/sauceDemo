@@ -17,6 +17,8 @@ public class CheckOutCompletePage {
         driver = DriverSingleton.getDriver();
         PageFactory.initElements(driver, this);
     }
+    @FindBy (css = "#checkout_complete_container > h2")
+    private WebElement titoloOrderRecieved;
 
     @FindBy(id = "back-to-products")
     private WebElement backHomePageButton;
@@ -27,4 +29,6 @@ public class CheckOutCompletePage {
 
         backHomePageButton.click();
     }
+
+    public String getTitoloOrderRecieved() { return titoloOrderRecieved.getText(); }
 }

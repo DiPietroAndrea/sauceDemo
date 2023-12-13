@@ -14,7 +14,7 @@ public class DriverSingleton {
         instantiate(driver);
     }
 
-    public WebDriver instantiate(String strategy) {
+    public static WebDriver instantiate(String strategy) {
         DriverStategy driverStategy = DriverStrategyImplementer.chooseStrategy(strategy);
         driver = driverStategy.setStrategy();
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
