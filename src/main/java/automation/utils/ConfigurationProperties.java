@@ -11,13 +11,17 @@ public class ConfigurationProperties {
     @Value("${browser}")
     private String browser;
 
-    @Value(("${titolohomepage}"))
+    @Value("${titolohomepage}")
     private String titoloHomePage;
+
+
+    public String getBrowser() {
+        return browser;
+    }
 
     public String getTitoloHomePage() {
         return titoloHomePage;
     }
-    public String getBrowser() {
-        return browser;
-    }
+
+
 }

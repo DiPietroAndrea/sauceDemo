@@ -26,7 +26,6 @@ public class LoginInPage {
     @FindBy(css = "#login_button_container > div > form > div.error-message-container.error > h3")
     private WebElement errorBlockedText;
 
-    //"#login_button_container > div > form > div.error-message-container.error > h3"
     @FindBy(xpath = "//*[@data-test = 'error']"   )
     private WebElement errorCredentialText;
 
@@ -38,7 +37,6 @@ public class LoginInPage {
     public void clickLogInButton() {
         logInButton.click();
     }
-
     public  String getBlockedError() {
         return errorBlockedText.getText();
     }
