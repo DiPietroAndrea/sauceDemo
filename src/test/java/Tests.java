@@ -1,12 +1,12 @@
-import drivers.DriverSingleton;
+import automation.drivers.DriverSingleton;
+import automation.pages.*;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
-import pages.*;
-import utils.Constants;
-import utils.FrameworkProperties;
+import automation.utils.Constants;
+import automation.utils.FrameworkProperties;
 
 import static junit.framework.Assert.assertEquals;
 

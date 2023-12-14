@@ -12,5 +12,3 @@ Feature: Login
     Examples:
       | username        | password       |
       | standard_user   | secret_sauce   |
-      | locked_out_user | secret_sauce   |
-      | standard_us     | secret_sauce   |

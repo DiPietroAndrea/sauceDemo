@@ -1,6 +1,6 @@
-package pages;
+package automation.pages;
 
-import drivers.DriverSingleton;
+import automation.drivers.DriverSingleton;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -33,7 +33,10 @@ public class LoginInPage {
     public void logIn (String username, String password) {
     signInUsername.sendKeys(username);
         this.signInPassword.sendKeys(password);
-    logInButton.click();
+    }
+
+    public void clickLogInButton() {
+        logInButton.click();
     }
 
     public  String getBlockedError() {

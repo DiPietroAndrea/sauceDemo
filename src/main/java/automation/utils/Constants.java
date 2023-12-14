@@ -1,4 +1,4 @@
-package utils;
+package automation.utils;
 
 public class Constants {
     public static final String PROPERTIES_FILE_NAME = "framework.properties";

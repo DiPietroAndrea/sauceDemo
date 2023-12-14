@@ -1,7 +1,8 @@
-package drivers;
+package automation.drivers;
 
-import drivers.strategies.DriverStategy;
-import drivers.strategies.DriverStrategyImplementer;
+import automation.drivers.strategies.DriverStategy;
+import automation.drivers.strategies.DriverStrategyImplementer;
+import automation.utils.Constants;
 import org.openqa.selenium.WebDriver;
 
 import java.util.concurrent.TimeUnit;
@@ -14,7 +15,7 @@ public class DriverSingleton {
         instantiate(driver);
     }
 
-    public static WebDriver instantiate(String strategy) {
+    public WebDriver instantiate(String strategy) {
         DriverStategy driverStategy = DriverStrategyImplementer.chooseStrategy(strategy);
         driver = driverStategy.setStrategy();
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
