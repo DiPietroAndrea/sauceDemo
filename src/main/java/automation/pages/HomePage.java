@@ -2,6 +2,7 @@ package automation.pages;
 
 import automation.drivers.DriverSingleton;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -46,9 +47,20 @@ public class HomePage {
     @FindBy(css = "#inventory_container > div")
     private List<WebElement> productsList;
 
-    public String getTitle() {
-        return titoloProdotti.getText();
-    }
+    @FindBy(id = "item_4_img_link")
+    private WebElement detailImageProduct;
+
+    @FindBy(css = "#inventory_item_container > div > div > div.inventory_details_desc_container > div.inventory_details_name.large_size")
+    private WebElement productName;
+
+    @FindBy(id = "remove-sauce-labs-backpack")
+    private WebElement removeProductButton;
+
+    @FindBy(css = "#item_4_title_link > div")
+    private WebElement titleProductName;
+
+
+
 
     public void addToCart() {
         addToCartButton.click();
@@ -81,6 +93,27 @@ public class HomePage {
         WebElement firstProduct = productsList.get(0);
         WebElement titleProduct = firstProduct.findElement(By.cssSelector(".inventory_item_name"));
         return titleProduct.getText();
+    }
+
+    public void goToDetailPageFromTitle() {
+        titleProductName.click();
+    }
+
+    public void removeProduct() {
+        removeProductButton.click();
+    }
+    public void goToDetailProductImage() {
+        detailImageProduct.click();
+    }
+    public String getProductNameText() {
+        return productName.getText();
+    }
+    public String getNumberProductsCartText() { return numberOfProducts.getText(); }
+    public String getRemoveProductButtonText() {return  removeProductButton.getText(); }
+    public String getAddToCartButtonText() { return addToCartButton.getText(); }
+
+    public String getTitle() {
+        return titoloProdotti.getText();
     }
 
 }

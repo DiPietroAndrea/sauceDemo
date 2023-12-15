@@ -1,7 +1,9 @@
 Feature: Login
+
   Test login with different combination
 
   Background:
+
     Given I am on the login page
 
   Scenario Outline: Login with correct credentials

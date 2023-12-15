@@ -5,17 +5,23 @@ import automation.drivers.DriverSingleton;
 import automation.pages.*;
 import automation.utils.ConfigurationProperties;
 import automation.utils.Constants;
+import io.cucumber.java.AfterAll;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.cucumber.spring.CucumberContextConfiguration;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.sql.Driver;
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 
@@ -25,6 +31,7 @@ import static org.junit.Assert.assertEquals;
     private WebDriver driver;
     private LoginInPage loginInPage;
     private HomePage homePage;
+    private CartPage cartPage;
 
         @Autowired
         ConfigurationProperties configurationProperties;
@@ -34,7 +41,7 @@ import static org.junit.Assert.assertEquals;
             DriverSingleton.getInstance(configurationProperties.getBrowser());
             loginInPage = new LoginInPage();
             homePage = new HomePage();
-
+            cartPage = new CartPage();
         }
 
 
@@ -94,6 +101,68 @@ import static org.junit.Assert.assertEquals;
         @When("I sort the products from Z to A")
         public void iSortTheProductsFromZToA() {
         homePage.setSortZToA();
+        }
+
+
+        //TEST DETTAGLIO
+
+        //TEST DEL DETTAGLIO TRAMITE TITOLO
+
+        @When("I click on the image of a product")
+        public void iClickOnTheImageOfAProduct() {
+            homePage.goToDetailProductImage();
+        }
+
+        @Then("I see the page of detail of {string}")
+        public void iSeeThePageOfDetailOfThatProduct(String title) {
+            assertEquals(title, homePage.getProductNameText());
+        }
+
+        @When("I click on the title of a product")
+        public void iClickOnTheTitleOfAProduct() {
+        homePage.goToDetailPageFromTitle();
+        }
+
+
+
+        //TEST AGGIUNTA PRODOTTO
+
+        @When("I click on the button to add a product")
+        public void iClickOnTheButtonToAddAProduct() {
+        homePage.addToCart();
+        }
+
+        @Then("The cart will be updated to {string}")
+        public void theCartWillBeUpdated(String number) {
+        assertEquals(number, homePage.getNumberProductsCartText());
+        }
+
+
+        //TEST RIMOZIONE PRODOTTO
+
+        @When("I click on the button to remove a product")
+        public void iClickOnTheButtonToRemoveAProduct() {
+        homePage.removeProduct();
+        }
+
+        @Then("The product can be {string} again")
+        public void theProductCanBeAddedAgain(String remove) {
+        assertEquals(remove, homePage.getRemoveProductButtonText());
+        }
+
+        @Then("The button says {string}")
+        public void theButtonSaysAddToCart(String addToCart) {
+        assertEquals(addToCart, homePage.getAddToCartButtonText());
+        }
+
+        @When("I click on the cart button")
+        public void i_Click_On_The_Cart_Button() {
+                homePage.proceedToCheckOut();
+        }
+
+        @AfterEach
+        public void closedObject() {
+            driver.quit();
         }
 
 

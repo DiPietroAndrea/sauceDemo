@@ -51,6 +51,7 @@ public class Tests {
     public void authenticationTestErrorCredential() {
         driver.get(Constants.URL);
         loginInPage.logIn(frameworkProperties.getProperty(Constants.USERNAME), frameworkProperties.getProperty(Constants.PASSWORD));
+        loginInPage.clickLogInButton();
         Assertions.assertEquals(frameworkProperties.getProperty(Constants.CREDENZIALI_ERROR), loginInPage.getCredentialError());
     }
 
