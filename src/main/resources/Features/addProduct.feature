@@ -13,17 +13,15 @@ Feature: add product
 
   Scenario: I add a product to the cart
 
-    When I click on the button to add a product
+    When I click on a button of a product to add it
 
-    Then The cart will be updated to "1"
-
-    But I click on the button to remove a product
+    Then The cart will be updated
 
 
   Scenario: I add a product from the detail page
 
     When I click on the image of a product
 
-    Then I click on the button to add a product
+    And I click on the button to add a product
 
-    But I click on the button to remove a product
+    Then The cart will be updated

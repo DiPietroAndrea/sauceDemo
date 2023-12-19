@@ -8,12 +8,18 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import automation.utils.Constants;
 
+import java.awt.*;
 import java.time.Duration;
+import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import static automation.utils.Constants.NUMERO_PRODOTTI_CARRELLO;
 
 public class HomePage {
 
@@ -31,6 +37,9 @@ public class HomePage {
 
     @FindBy(css = "#shopping_cart_container > a > span")
     private WebElement numberOfProducts;
+
+    @FindBy(css="#inventory_container > div")
+    private WebElement productContainer;
 
     @FindBy(id = "shopping_cart_container")
     private WebElement cartButton;
@@ -59,17 +68,126 @@ public class HomePage {
     @FindBy(css = "#item_4_title_link > div")
     private WebElement titleProductName;
 
+    private List<WebElement> addToCartButtons;
+
+    private List<WebElement> productImages;
+
+    public List<String> getProductsTitleList() {
+        List<String> productNames = new ArrayList<>();
+        for (WebElement product : productsList) {
+            String productName = product.findElement(By.className("inventory_item_name")).getText();
+            productNames.add(productName);
+        }
+        return productNames;
+    }
+
+    public List<String> getProductNames(List<WebElement> productsList, By nameSelector) {
+        List<String> productNames = new ArrayList<>();
+        for (WebElement product : productsList) {
+            String productName = product.findElement(nameSelector).getText();
+            productNames.add(productName);
+        }
+        return productNames;
+    }
+
+
+    public void selectSortingType(String orderType) {
+        new Select(sortButton).selectByVisibleText(orderType);
+    }
+
+    public List<String> createListProductsByName() {
+        List<String> originalProductNames = driver.findElements(By.cssSelector(".inventory_item_name"))
+                .stream()
+                .map((WebElement::getText))
+                .collect(Collectors.toList());
+
+        return originalProductNames;
+    }
+
+    public List<Double> createListProductsByPrice() {
+        return driver.findElements(By.cssSelector(".inventory_item_price"))
+                .stream()
+                .map(element -> element.getText().replace("$", "").trim())
+                .map(Double::parseDouble)
+                .collect(Collectors.toList());
+    }
+
+    public List<String> productAscendingSorting() {
+        List<String> sortedProductNames = driver.findElements(By.cssSelector(".inventory_item_name"))
+                .stream()
+                .map(WebElement::getText)
+                .collect(Collectors.toList());
+
+        return sortedProductNames;
+    }
+
+    public List<String> productDescendingSorting() {
+        List<String> sortedProductNames = driver.findElements(By.cssSelector(".inventory_item_name"))
+                .stream()
+                .map(WebElement::getText)
+                .collect(Collectors.toList());
+
+        return sortedProductNames;
+    }
+
+    public void sortProductNames(List<String> productNames) {
+        Collections.sort(productNames);
+    }
+
+    public void reverseSortProductNames(List<String> productNames) {
+        Collections.sort(productNames, Collections.reverseOrder());
+    }
 
 
 
     public void addToCart() {
         addToCartButton.click();
 
-        if (numberOfProducts.getText().contains(Constants.NUMERO_PRODOTTI_CARRELLO)) {
+        if (numberOfProducts.getText().contains(NUMERO_PRODOTTI_CARRELLO)) {
             System.out.println("Il carrello è stato aggiornato");
         } else {
             System.out.println("Il carrello non è stato aggiornato");
         }
+    }
+
+    //Metodo che crea una lista con tutti gli Id di add to cart
+
+    public List<String> randomAddToCart() {
+        addToCartButtons = driver.findElements(By.xpath("//button[contains(@id, 'add-to-cart-')]"));
+        List<String> addTocartButtonIds = new ArrayList<>();
+
+        for (WebElement button : addToCartButtons) {
+            String buttonId = button.getAttribute("id");
+            addTocartButtonIds.add(buttonId);
+        }
+        return addTocartButtonIds;
+    }
+
+    //Metodo che randomizza e clicca un add to cart
+
+    public void randomSelectAddToCartButton() {
+        Random random = new Random();
+        int randomIndex = random.nextInt(addToCartButtons.size());
+        WebElement randomSelect = addToCartButtons.get(randomIndex);
+        randomSelect.click();
+    }
+
+    public List<String> randomProductImage() {
+         productImages = productContainer.findElements(By.className("inventory_item_img"));
+        List<String> imageIds = new ArrayList<>();
+
+        for (WebElement image : productImages) {
+            String imageId = image.getAttribute("src");
+            imageIds.add(imageId);
+        }
+        return imageIds;
+    }
+
+    public void randomSelectImage() {
+        Random random = new Random();
+        int randomIndex = random.nextInt(productImages.size());
+        WebElement randomSelect = productImages.get(randomIndex);
+        randomSelect.click();
     }
 
     public void proceedToCheckOut() {
@@ -98,7 +216,6 @@ public class HomePage {
     public void goToDetailPageFromTitle() {
         titleProductName.click();
     }
-
     public void removeProduct() {
         removeProductButton.click();
     }
@@ -111,9 +228,14 @@ public class HomePage {
     public String getNumberProductsCartText() { return numberOfProducts.getText(); }
     public String getRemoveProductButtonText() {return  removeProductButton.getText(); }
     public String getAddToCartButtonText() { return addToCartButton.getText(); }
-
     public String getTitle() {
         return titoloProdotti.getText();
+    }
+
+    public Integer getNumberOfItems() {
+        String textNumber = numberOfProducts.getText();
+        int number = Integer.parseInt(textNumber);
+        return number;
     }
 
 }

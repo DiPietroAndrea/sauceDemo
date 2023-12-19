@@ -10,11 +10,25 @@ Feature: Sort
 
     When I sort the products from A to Z
 
-    Then The products are sorted for 'Sauce Labs Backpack'
+    Then The products are sorted by ascending name
 
 
   Scenario: Sorting products in alphabetical order from Z to A
 
     When I sort the products from Z to A
 
-    Then The products are sorted for 'Test.allTheThings() T-Shirt (Red)'
+    Then The products are sorted by descending name
+
+
+  Scenario: Sorting products with lowest price
+
+    When I sort the products from low to high price
+
+    Then The products are sorted by lowest price
+
+
+  Scenario: Sorting products with the highest price
+
+    When I sort the products from high to low price
+
+    Then The products are sorted by the highest price

@@ -5,6 +5,7 @@ import automation.drivers.DriverSingleton;
 import automation.pages.*;
 import automation.utils.ConfigurationProperties;
 import automation.utils.Constants;
+import io.cucumber.java.After;
 import io.cucumber.java.AfterAll;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
@@ -21,9 +22,14 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.sql.Driver;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @CucumberContextConfiguration
 @ContextConfiguration(classes = AutomationFrameworkConfiguration.class)
@@ -32,6 +38,12 @@ import static org.junit.Assert.assertEquals;
     private LoginInPage loginInPage;
     private HomePage homePage;
     private CartPage cartPage;
+
+
+    //Liste di supporto per il sort test
+
+    private List<String> originalProductsNames;
+    private List<Double> originalProductsPrice;
 
         @Autowired
         ConfigurationProperties configurationProperties;
@@ -76,31 +88,88 @@ import static org.junit.Assert.assertEquals;
         }
 
 
+        @Given("I am on the home page")
+        public void iAmOnTheHomePage(String username, String password) {
+            loginInPage.logIn(username, password);
+            loginInPage.clickLogInButton();
+        }
+
         //TEST ORDINAMENTO PRODOTTI HOME PAGE
 
         //TEST ORDINAMENTO DALLA A ALLA Z
 
-        @Given("I am on the home page")
-        public void iAmOnTheHomePage(String username, String password) {
-        loginInPage.logIn(username, password);
-        loginInPage.clickLogInButton();
-        }
 
         @When("I sort the products from A to Z")
         public void iSortTheProductsFromAToZ() {
-            homePage.setSortAToZ();
+
+            List<String> originalNames = homePage.createListProductsByName();
+            this.originalProductsNames = originalNames;
+            homePage.selectSortingType("Name (A to Z)");
         }
 
-        @Then("The products are sorted for {string}")
-        public void theProductsAreSortedForTitle(String title) {
-            assertEquals(title, homePage.getProductName());
+        @Then("The products are sorted by ascending name")
+        public void theProductsAreSortedForTitle() {
+            List<String> sortedProductNames = homePage.productAscendingSorting();
+
+            assertEquals("Products are not sorted in ascending order by name,",
+                    this.originalProductsNames.stream().sorted().collect(Collectors.toList()),
+                    sortedProductNames);
         }
 
         //TEST ORDINAMENTO DALLA Z ALLA A
 
         @When("I sort the products from Z to A")
         public void iSortTheProductsFromZToA() {
-        homePage.setSortZToA();
+                List<String> originalNames = homePage.createListProductsByName();
+                this.originalProductsNames = originalNames;
+                homePage.selectSortingType("Name (Z to A)");
+
+        }
+
+        @Then("The products are sorted by descending name")
+        public void the_Products_Are_Sorted_By_Descending_Name() {
+            List<String> sortedProductNames = homePage.productDescendingSorting();
+
+            assertEquals("Products are not sorted in descending order by name",
+                    this.originalProductsNames.stream().sorted(Collections.reverseOrder()).collect(Collectors.toList()),
+                    sortedProductNames);
+        }
+
+        //TEST ORDINAMENTO PER PREZZO PIù BASSO
+
+        @When("I sort the products from low to high price")
+        public void i_Sort_The_Products_From_Low_To_High_Price() {
+        List<Double> originalPrice = homePage.createListProductsByPrice();
+        homePage.selectSortingType("Price (low to high)");
+        this.originalProductsPrice = originalPrice;
+        }
+
+        @Then("The products are sorted by lowest price")
+        public void the_Products_Are_Sorted_By_Lowest_Price() {
+        List<Double> expectedPrices = new ArrayList<>(this.originalProductsPrice);
+        Collections.sort(expectedPrices);
+
+        List<Double> sortedPrices = homePage.createListProductsByPrice();
+        assertEquals("Prices no tosrted from the lowest", expectedPrices, sortedPrices);
+        }
+
+
+        //TEST ORDINAMENTO DEL PREZZO DAL PIù ALTO AL PIù BASSO
+
+        @When("I sort the products from high to low price")
+        public void i_Sort_The_Products_From_High_To_Low_Price() {
+            List<Double> originalPrice = homePage.createListProductsByPrice();
+            this.originalProductsPrice = originalPrice;
+            homePage.selectSortingType("Price (high to low)");
+        }
+
+        @Then("The products are sorted by the highest price")
+        public void the_Products_Are_Sorted_By_The_Highest_Price() {
+        List<Double> expectedPrices = new ArrayList<>(this.originalProductsPrice);
+        Collections.sort(expectedPrices, Collections.reverseOrder());
+
+        List<Double> sortedPrices = homePage.createListProductsByPrice();
+        assertEquals("Prices not sorted from the highest price", expectedPrices, sortedPrices);
         }
 
 
@@ -110,7 +179,9 @@ import static org.junit.Assert.assertEquals;
 
         @When("I click on the image of a product")
         public void iClickOnTheImageOfAProduct() {
-            homePage.goToDetailProductImage();
+            homePage.randomSelectImage();
+            //homePage.goToDetailProductImage();
+            System.out.print("Sono entrato in una pagina di dettaglio random");
         }
 
         @Then("I see the page of detail of {string}")
@@ -132,9 +203,11 @@ import static org.junit.Assert.assertEquals;
         homePage.addToCart();
         }
 
-        @Then("The cart will be updated to {string}")
-        public void theCartWillBeUpdated(String number) {
-        assertEquals(number, homePage.getNumberProductsCartText());
+        @Then("The cart will be updated")
+        public void theCartWillBeUpdated() {
+        assertTrue(homePage.getNumberOfItems() > 0);
+
+        //assertEquals(number, homePage.getNumberProductsCartText());
         }
 
 
@@ -160,11 +233,17 @@ import static org.junit.Assert.assertEquals;
                 homePage.proceedToCheckOut();
         }
 
-        @AfterEach
+
+
+        @After
         public void closedObject() {
-            driver.quit();
+            DriverSingleton.closeObjectInstance();
         }
 
 
-
+        @When("I click on a button of a product to add it")
+        public void iClickOnAButtonOfAProductToAddIt() {
+            homePage.randomAddToCart();
+            homePage.randomSelectAddToCartButton();
+        }
 }
